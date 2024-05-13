@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "wdio": "wdio run ./wdio.conf.ts"
+       "wdio": "wdio wdio.conf.js"
   },
   "author": "suchitha",
   "license": "ISC",
