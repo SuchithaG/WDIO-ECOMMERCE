@@ -89,28 +89,48 @@ class prestashop {
         return $('#field-lastname')
     }
 
+     /**
+     * Method to wait for the page load by checking the readyness of the page
+     * @param {*} timeout 
+     * @param {*} timeoutMsg 
+     */
+     async waitForPageLoad(timeout = 80000, timeoutMsg = 'Page did not load within 80 seconds') {
+        await browser.waitUntil(() => {
+            return browser.execute(() => {
+                return document.readyState === 'complete';
+            });
+        }, { timeout, timeoutMsg });
+    }
+
+    /**
+     * This method will search for the Item
+     * @param {*} value 
+     * @param {*} keys 
+     */
     async searchForItem(value, keys) {
         await browser.switchToFrame(await this.iframe);
         await (await this.myShopLogo).waitForDisplayed();
-        await (await this.searchBox).waitForExist();
         await (await this.searchBox).waitForDisplayed();
         await (await this.searchBox).click();
         await (await this.searchBox).setValue(value);
         await browser.keys(keys);
     }
 
-    async verifyTheSearchResults(searchedText) {
+    /**
+     * In this method verifying the search results if all the search resulted items contain the searched item text
+     * @param {*} searchedText 
+     */
+    async verifyTheSearchResults(searchedItem) {
         await (await this.availableProducts)[0].scrollIntoView();
-        const searchResultsText = await (await this.availableProducts).map(element => element.getText());
-        console.log("search results are : " + searchResultsText);
-        // for (let i = 1; i < searchResultsText.length; i++) {
-        //     await expect(searchResultsText[i].toLowerCase()).toContain(searchedText);
-        // }
-         searchResultsText.forEach(element=>expect(element.toLowerCase()).toContain(searchedText));
-
+        const searchResults = await (await this.availableProducts).map(element => element.getText());
+        console.log("search results are : " + searchResults);
+        searchResults.forEach(item => expect(item.toLowerCase()).toContain(searchedItem));
     }
 
-    async addItemToCartAndValidateItems() {
+    /**
+     * Adding Item to cart and verifying the name of the cart item vs name of the item before adding it to the cart
+     */
+    async addItemToCartAndClickCheckOut() {
         (await this.homeLink).click();
         await browser.scroll(0, 1000);
         await (await this.productTitles)[0].moveTo();
@@ -126,7 +146,13 @@ class prestashop {
         await (await this.proceedToCheckOut).click();
     }
 
-    async enterTheDetails(firsname, lastname, emailId) {
+    /**
+     * In this method entering the required details on checkout page
+     * @param {*} firsname 
+     * @param {*} lastname 
+     * @param {*} emailId 
+     */
+    async enterThePersonalDetails(firsname, lastname, emailId) { 
         await (await this.gender).click();
         await (await this.firstName).setValue(firsname);
         await (await this.lastName).setValue(lastname);
@@ -139,15 +165,12 @@ class prestashop {
         await (await this.continue).click();
     }
 
-    async waitForPageLoad(timeout = 60000, timeoutMsg = 'Page did not load within 40 seconds') {
-        await browser.waitUntil(() => {
-            return browser.execute(() => {
-                return document.readyState === 'complete';
-            });
-        }, { timeout, timeoutMsg });
-    }
-
-    async validateTheInputValues(firstname, lastname) {
+    /**
+     * Validating the input values in the checkout page are same as the confirmation page details
+     * @param {*} firstname 
+     * @param {*} lastname 
+     */
+    async validatePersonalDetails(firstname, lastname) {
         const firstnamefield = await (await this.firstNameValue).getAttribute('value');
         const lastnamefield = await (await this.lastNameValue).getAttribute('value');
         await expect(firstnamefield).toEqual(firstname);
