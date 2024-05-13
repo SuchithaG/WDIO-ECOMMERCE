@@ -1,21 +1,21 @@
 const { expect } = require('@wdio/globals')
-const SecurePage = require('../pageobjects/secure.page')
-const addtocart = require('../pageobjects/addtocart.page')
 const prestashop = require('../pageobjects/prestashop.page')
+const firstname = "presta";
+const secondname = "shop";
+const email = "prestashop@email.com";
+const itemname = "mug";
 
 describe('Open application and search for product', () => {
-    it('search for a product', async () => {
-
-        const firstname = "presta";
-        const secondname = "shop";
-        const email = "prestashop@email.com";
-         
+    it('search for a product and validate the search results', async () => {
         await browser.url('/');
         await prestashop.waitForPageLoad();
-        await prestashop.searchForItem("mug", "Enter");
-        await prestashop.verifyTheSearchResults("mug");
-        await prestashop.addItemToCartAndValidateItems();
-        await prestashop.enterTheDetails(firstname,secondname,email);
-        await prestashop.validateTheInputValues(firstname,secondname);
+        await prestashop.searchForItem(itemname, "Enter");
+        await prestashop.verifyTheSearchResults(itemname);
+    })
+
+    it('add the product to the cart and click on proceed and then enter personal details and validate them', async()=>{
+        await prestashop.addItemToCartAndClickCheckOut();
+        await prestashop.enterThePersonalDetails(firstname,secondname,email);
+        await prestashop.validatePersonalDetails(firstname,secondname);
     })
 })
