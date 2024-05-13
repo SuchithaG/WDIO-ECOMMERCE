@@ -18,5 +18,8 @@
     "chromedriver": "^124.0.3",
     "wdio-chromedriver-service": "^8.1.1",
     "wdio-video-reporter": "^5.2.0"
+  },
+  "dependencies": {
+    "allure-commandline": "^2.29.0"
   }
 }
